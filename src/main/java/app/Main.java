@@ -33,7 +33,19 @@ public class Main {
 
             for (ArrayList<String> row : rowToValues) {
 
-                printer.printRecord(row.get(1), "B", "C");
+                String columnTwo = "";
+                boolean isFirst = true;
+                for (int i = 1; i < row.size(); ++i) {
+                    if (isFirst) {
+                        columnTwo += row.get(i);
+                        isFirst = false;
+                    } else {
+                        columnTwo += " | " + row.get(i);
+                    }
+
+                }
+
+                printer.printRecord(row.get(1), columnTwo, "C");
 
             }
 
@@ -67,6 +79,7 @@ public class Main {
                 String columnTwo = record.get(Headers.ALT_PN);
                 if (!columnTwo.equals("")) {
                     values.add(columnTwo);
+                    values.add("test");
                 }
 
                 // Add to the main array
