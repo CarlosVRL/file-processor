@@ -22,8 +22,16 @@ public class Main {
 
         String filename = args[0];
         ArrayList< ArrayList<String>> rowToValues = readSourceFile(filename);
-        int[] conflictMarkers = new int[rowToValues.size() + 1]; // add 1 for headers
+        int[] conflictMarkers = checkForConflicts(rowToValues);
         writeDuplicatesToCsv(rowToValues, conflictMarkers);
+    }
+
+    private static int[] checkForConflicts(ArrayList< ArrayList<String>> rowToValues) {
+        int[] res = new int[rowToValues.size()];
+
+
+
+        return res;
     }
 
     private static void writeDuplicatesToCsv(ArrayList<ArrayList<String>> rowToValues, int[] conflictMarkers) {
@@ -39,7 +47,7 @@ public class Main {
 
                 String columnTwo = "";
                 boolean isFirst = true;
-                for (int i = 1; i < row.size(); ++i) {
+                for (int i = 1 /* position 0 is Column A */; i < row.size(); ++i) {
                     if (isFirst) {
                         columnTwo += row.get(i);
                         isFirst = false;
@@ -48,14 +56,16 @@ public class Main {
                     }
                 }
 
-                int columnThree = conflictMarkers[position];
+                String columnThree = (conflictMarkers[position] != 0) ?
+                        String.valueOf(conflictMarkers[position]) : "";
 
                 printer.printRecord(columnOne, columnTwo, columnThree);
                 position++;
             }
 
             printer.flush();
-
+            printer.close();
+            writer.close();
 
         } catch (Exception e) {
             e.printStackTrace();
