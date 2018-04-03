@@ -45,7 +45,7 @@ public class Main {
 
                 }
 
-                printer.printRecord(row.get(1), columnTwo, "C");
+                printer.printRecord(row.get(0), columnTwo, "C");
 
             }
 
