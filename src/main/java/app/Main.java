@@ -29,9 +29,52 @@ public class Main {
     private static int[] checkForConflicts(ArrayList< ArrayList<String>> rowToValues) {
         int[] res = new int[rowToValues.size()];
 
-
+        int i = 0;
+        int conflictCounter = 1;
+        for (ArrayList<String> row : rowToValues) {
+            conflictCounter = checkLineItemsForConflicts(row, res, conflictCounter, i, rowToValues);
+            i++;
+        }
 
         return res;
+    }
+
+    private static int checkLineItemsForConflicts(ArrayList<String> row, int[] res, int conflictCounter, int rowIndex, ArrayList< ArrayList<String>> rowToValues) {
+        boolean conflictDetected = false;
+
+        // skip if the line has already been claimed as a duplicate
+        if (res[rowIndex] != 0) {
+            return conflictCounter;
+        }
+
+        // check the other line items to see if there's a match
+        int i = 0;
+        for (ArrayList<String> rowIter : rowToValues) {
+            if (i == rowIndex) {
+                // skip: the row cannot be a duplicate of itself
+            } else if (res[i] != 0) {
+                // a duplication has already been claimed
+            } else {
+                // check each array for conflicts
+
+                for (String src : row) {
+                    if (rowIter.contains(src)) {
+                        // common element detected
+                        conflictDetected = true;
+                        res[i] = conflictCounter;
+                    }
+                }
+            }
+
+            i++;
+        }
+
+        if (conflictDetected) {
+            res[rowIndex] = conflictCounter;
+            conflictCounter++;
+        }
+
+        return conflictCounter;
     }
 
     private static void writeDuplicatesToCsv(ArrayList<ArrayList<String>> rowToValues, int[] conflictMarkers) {
@@ -87,7 +130,7 @@ public class Main {
                 ArrayList<String> values = new ArrayList<>();
 
                 // Column One assumes (1) value
-                String columnOne = record.get(Headers.PN);
+                String columnOne = record.get(Headers.PN).toLowerCase();
                 values.add(columnOne);
 
                 // Column Two may be empty, single, or multi-valued (|)
@@ -95,7 +138,7 @@ public class Main {
                 if (!columnTwo.equals("")) {
                     String[] tokens = columnTwo.split("\\|");
                     for (String token : tokens) {
-                        values.add(token.trim());
+                        values.add(token.trim().toLowerCase());
                     }
                 }
 
