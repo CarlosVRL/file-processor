@@ -8,7 +8,11 @@ import java.io.Reader;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello, worlds!");
+
+        if (args.length != 1) {
+            usage();
+            return;
+        }
 
         String filename = args[0];
 
@@ -29,5 +33,9 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void usage() {
+        System.out.println("Usage: java -jar *.jar FILENAME");
     }
 }
