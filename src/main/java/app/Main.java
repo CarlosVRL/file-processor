@@ -22,16 +22,20 @@ public class Main {
 
         String filename = args[0];
         ArrayList< ArrayList<String>> rowToValues = readSourceFile(filename);
-        writeDuplicatesToCsv(rowToValues);
+        int[] conflictMarkers = new int[rowToValues.size() + 1]; // add 1 for headers
+        writeDuplicatesToCsv(rowToValues, conflictMarkers);
     }
 
-    private static void writeDuplicatesToCsv(ArrayList<ArrayList<String>> rowToValues) {
+    private static void writeDuplicatesToCsv(ArrayList<ArrayList<String>> rowToValues, int[] conflictMarkers) {
         System.out.println("Processing " + rowToValues.size() + " rows");
         try {
             BufferedWriter writer = Files.newBufferedWriter(Paths.get("./output.tmp.csv"));
             CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Column A", "Column B", "Column C"));
 
+            int position = 0;
             for (ArrayList<String> row : rowToValues) {
+
+                String columnOne = row.get(0);
 
                 String columnTwo = "";
                 boolean isFirst = true;
@@ -42,11 +46,12 @@ public class Main {
                     } else {
                         columnTwo += " | " + row.get(i);
                     }
-
                 }
 
-                printer.printRecord(row.get(0), columnTwo, "C");
+                int columnThree = conflictMarkers[position];
 
+                printer.printRecord(columnOne, columnTwo, columnThree);
+                position++;
             }
 
             printer.flush();
@@ -78,8 +83,10 @@ public class Main {
                 // Column Two may be empty, single, or multi-valued (|)
                 String columnTwo = record.get(Headers.ALT_PN);
                 if (!columnTwo.equals("")) {
-                    values.add(columnTwo);
-                    values.add("test");
+                    String[] tokens = columnTwo.split("\\|");
+                    for (String token : tokens) {
+                        values.add(token.trim());
+                    }
                 }
 
                 // Add to the main array
