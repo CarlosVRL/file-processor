@@ -2,12 +2,13 @@ package app;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.io.File;
 
 public class MainTest {
     @Test
     public void main_canReadTwoColumnsWithHeader() throws Exception {
-        String args[] = {"Hello, Worlds", "Filename"};
-        Main.main(args);
+        File resource = new File("src/test/resources/test-data.csv");
+        String filename = resource.getAbsolutePath();
+        Main.main(new String[]{filename});
     }
 }
