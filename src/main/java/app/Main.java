@@ -1,17 +1,17 @@
 package app;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Main {
-
-    public enum Headers {
-        PN, ALT_PN
-    }
 
     public static void main(String[] args) {
 
@@ -21,15 +21,27 @@ public class Main {
         }
 
         String filename = args[0];
-
         ArrayList< ArrayList<String>> rowToValues = readSourceFile(filename);
+        writeDuplicatesToCsv(rowToValues);
+    }
 
-        for (ArrayList<String> row : rowToValues) {
-            System.out.println("Row Start");
-            for (String value : row) {
-                System.out.println(value);
+    private static void writeDuplicatesToCsv(ArrayList<ArrayList<String>> rowToValues) {
+        System.out.println("Processing " + rowToValues.size() + " rows");
+        try {
+            BufferedWriter writer = Files.newBufferedWriter(Paths.get("./output.tmp.csv"));
+            CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader("Column A", "Column B", "Column C"));
+
+            for (ArrayList<String> row : rowToValues) {
+
+                printer.printRecord(row.get(1), "B", "C");
+
             }
-            System.out.println("Row End");
+
+            printer.flush();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -69,5 +81,9 @@ public class Main {
 
     private static void usage() {
         System.out.println("Usage: java -jar *.jar FILENAME");
+    }
+
+    public enum Headers {
+        PN, ALT_PN
     }
 }

@@ -17,4 +17,11 @@ public class MainTest {
     public void main_willPrintUsageForEmptyArgs() {
         Main.main(new String[]{});
     }
+
+    @Test
+    public void main_canGenerateOutputFile() {
+        File resource = new File("src/test/resources/test-data.csv");
+        String filename = resource.getAbsolutePath();
+        Main.main(new String[]{filename});
+    }
 }
