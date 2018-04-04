@@ -3,6 +3,7 @@ package app;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ItemFinder {
 
@@ -50,7 +51,7 @@ public class ItemFinder {
         boolean duplicateDetected = false;
 
         // Initialize the rows containing items in common (first-level matching)
-        List<Integer> unprocessedRowIndexes = new ArrayList<>();
+        List<Integer> unprocessedRowIndexes = new CopyOnWriteArrayList<>();
         unprocessedRowIndexes.add(rowIndex); // The row itself
 
         // Initialize the processed (matching list)
@@ -101,6 +102,47 @@ public class ItemFinder {
             System.out.println("Index : " + foundIndex);
         }
 
+        // Since at least (1) duplicate was found, mark the selected row index
+        if (duplicateDetected) {
+            markers[rowIndex] = conflictCounter;
+        }
+
+        // Cycle through the unprocessed indexes, adding and removing rows until stable
+        while (unprocessedRowIndexes.size() > 0) {
+
+            // Primary loop is over the unprocessed item indexes
+            for (int unprocessedRowIndex : unprocessedRowIndexes) {
+                // Initialize derived contents
+                List<String> rowItemList = rows.get(unprocessedRowIndex); // The list of items
+                List<String> itemsDerivedFromRowItemList = new ArrayList<>(); // Initially empty
+
+                // Loop over the items and add new indexes to the derived container,
+                // and add to to derived class if match is found
+                iterIndex = 0;
+                for (ArrayList<String> iterRow : rows) {
+                    if (markers[iterIndex] != 0) {
+                        // the row has already been marked
+                        iterIndex++;
+                        continue;
+                    } else if (rowContainsCommonElement(rowItemList, iterRow)
+                            && !unprocessedRowIndexes.contains(iterIndex)
+                            && !processedRowIndexes.contains(iterIndex)) {
+                        unprocessedRowIndexes.add(iterIndex);
+                        markers[iterIndex] = conflictCounter;
+                    } else {
+                        // not matched or redundant
+                    }
+                    iterIndex++;
+                }
+
+                if (!processedRowIndexes.contains(unprocessedRowIndex)) {
+                    processedRowIndexes.add(unprocessedRowIndex);
+                }
+
+                unprocessedRowIndexes.remove((Object) unprocessedRowIndex);
+            }
+        }
+
         // Cycle through the unprocessed list until there are no more rows
 //        while (unprocessedRowIndexes.size() > 0) {
 //
@@ -141,7 +183,6 @@ public class ItemFinder {
 //        }
 
         if (duplicateDetected) {
-            markers[rowIndex] = conflictCounter;
             conflictCounter++;
         }
 
