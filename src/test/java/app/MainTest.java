@@ -31,4 +31,11 @@ public class MainTest {
         String filename = resource.getAbsolutePath();
         Main.main(new String[]{filename});
     }
+
+    @Test
+    public void main_canGenerateLargeOutputFile() {
+//        File resource = new File("src/test/resources/test-data-large.csv");
+//        String filename = resource.getAbsolutePath();
+//        Main.main(new String[]{filename});
+    }
 }
