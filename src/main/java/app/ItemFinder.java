@@ -1,5 +1,6 @@
 package app;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,34 @@ public class ItemFinder {
 
     }
 
-    public List<Integer> findItems(String match) {
+    /**
+     * Check the passed array and return an array of duplicate markers.
+     *
+     * @param rows
+     * @return
+     */
+    public int[] checkForDuplicates(ArrayList<ArrayList<String>> rows) {
+        int[] markers = new int[rows.size()];
+
+        int index = 0;
+        //for (ArrayList<String> row : rows) {
+            markers = findDuplicatesByRow(rows.get(index), rows, markers, index);
+            //index++;
+        //}
+
+        return markers;
+    }
+
+    /**
+     *      * Find items matching the target row contents. Recursive search.
+     *
+     * @param row
+     * @param rows
+     * @param markers
+     * @param rowIndex
+     * @return
+     */
+    public int[] findDuplicatesByRow(ArrayList<String> row, ArrayList<ArrayList<String>> rows, int[] markers, int rowIndex) {
         List<Integer> unprocessedList = new ArrayList<>();
         List<Integer> processedList = new ArrayList<>();
 
@@ -68,6 +96,7 @@ public class ItemFinder {
             }
         }
 
-        return processedList;
+        //return processedList;
+        return new int[1];
     }
 }

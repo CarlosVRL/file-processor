@@ -20,10 +20,13 @@ public class Main {
             return;
         }
 
+        ItemFinder itemFinder =  new ItemFinder();
+
         String filename = args[0];
         ArrayList< ArrayList<String>> rowToValues = readSourceFile(filename);
-        int[] conflictMarkers = checkForConflicts(rowToValues);
-        writeDuplicatesToCsv(rowToValues, conflictMarkers);
+        //int[] conflictMarkers = checkForConflicts(rowToValues);
+        int[] duplicateMarkers = itemFinder.checkForDuplicates(rowToValues);
+        writeDuplicatesToCsv(rowToValues, duplicateMarkers);
     }
 
     private static int[] checkForConflicts(ArrayList< ArrayList<String>> rowToValues) {
