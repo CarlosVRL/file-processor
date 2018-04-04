@@ -24,4 +24,11 @@ public class MainTest {
         String filename = resource.getAbsolutePath();
         Main.main(new String[]{filename});
     }
+
+    @Test
+    public void main_canGenerateSmallOutputFile() {
+        File resource = new File("src/test/resources/test-data-small.csv");
+        String filename = resource.getAbsolutePath();
+        Main.main(new String[]{filename});
+    }
 }
