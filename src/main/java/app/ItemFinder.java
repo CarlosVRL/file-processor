@@ -6,8 +6,10 @@ import java.util.List;
 
 public class ItemFinder {
 
-    public ItemFinder() {
+    private int conflictCounter;
 
+    public ItemFinder() {
+        this.conflictCounter = 1;
     }
 
     /**
@@ -19,7 +21,7 @@ public class ItemFinder {
     public int[] checkForDuplicates(ArrayList<ArrayList<String>> rows) {
         int[] markers = new int[rows.size()];
 
-        int index = 0;
+        int index = 2;
         //for (ArrayList<String> row : rows) {
             markers = findDuplicatesByRow(rows.get(index), rows, markers, index);
             //index++;
@@ -45,8 +47,11 @@ public class ItemFinder {
             return markers;
         }
 
+        boolean duplicateDetected = false;
+
         // Initialize the rows containing items in common (first-level matching)
-        List<Integer> unprocessedRowIndexes = new ArrayList<>(rowIndex); // The row itself
+        List<Integer> unprocessedRowIndexes = new ArrayList<>();
+        unprocessedRowIndexes.add(rowIndex); // The row itself
 
         // Initialize the processed (matching list)
         List<Integer> processedRowIndexes = new ArrayList<>(); // empty
@@ -67,18 +72,33 @@ public class ItemFinder {
 //        }
         int iterIndex = 0;
         for (ArrayList<String> iterRow : rows) {
+            System.err.println("Working on index : " + iterIndex);
             if (rowIndex == iterIndex) {
                 // skips checking itself
+                System.err.println("Skip self");
+                iterIndex++;
                 continue;
             } else if (markers[iterIndex] != 0) {
                 // the row has already been marked
+                System.err.println("Skip marked");
+                iterIndex++;
                 continue;
             } else if (rowContainsCommonElement(row, iterRow)
                        && !unprocessedRowIndexes.contains(iterIndex)
                        && !processedRowIndexes.contains(iterIndex)) {
+                System.err.println("Add if common element and not redundant");
                 unprocessedRowIndexes.add(iterIndex);
+                markers[iterIndex] = conflictCounter;
+                duplicateDetected = true;
+            } else {
+                System.err.println("The record was not matched or is redundant");
             }
             iterIndex++;
+        }
+
+        System.err.println("Found " + unprocessedRowIndexes.size() + " rows matching row index : " + rowIndex);
+        for (int foundIndex : unprocessedRowIndexes) {
+            System.out.println("Index : " + foundIndex);
         }
 
         // Cycle through the unprocessed list until there are no more rows
@@ -120,6 +140,11 @@ public class ItemFinder {
 //            }
 //        }
 
+        if (duplicateDetected) {
+            markers[rowIndex] = conflictCounter;
+            conflictCounter++;
+        }
+
         //return processedList;
         return markers;
     }
@@ -127,8 +152,10 @@ public class ItemFinder {
     private boolean rowContainsCommonElement(List<String> row, List<String> rowIter) {
         boolean hasCommonElement = false;
         for (String src : row) {
+            System.err.println("Checking iterRow for for " + src);
             if (rowIter.contains(src)) {
                 hasCommonElement = true;
+                break;
             }
         }
         return hasCommonElement;
