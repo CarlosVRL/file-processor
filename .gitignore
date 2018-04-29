@@ -3,3 +3,8 @@
 build
 out
 output.tmp.csv
+target
+bin
+.settings
+.classpath
+.project
